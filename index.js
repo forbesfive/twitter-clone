@@ -1,6 +1,12 @@
 import { tweetsData } from './data.js'
 import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
+// localStorage.clear()
+
+function populateLocalStorage() {
+    localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData))
+}
+
 document.addEventListener('click', function(e){
     if(e.target.dataset.like){
        handleLikeClick(e.target.dataset.like) 
@@ -32,6 +38,7 @@ function handleReplyBtnClick(tweetId){
             profilePic: `images/scrimbalogo.png`,
             tweetText: document.getElementById(`reply-input-${tweetId}`).value,
         })
+        localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData))
         render()
         handleReplyClick(tweetId)
     }
@@ -49,6 +56,7 @@ function handleLikeClick(tweetId){
         targetTweetObj.likes++ 
     }
     targetTweetObj.isLiked = !targetTweetObj.isLiked
+    localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData))
     render()
 }
 
@@ -64,6 +72,7 @@ function handleRetweetClick(tweetId){
         targetTweetObj.retweets++
     }
     targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted
+    localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData))
     render() 
 }
 
@@ -86,6 +95,8 @@ function handleTweetBtnClick(){
             isRetweeted: false,
             uuid: uuidv4()
         })
+    
+        localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData) )
     render()
     tweetInput.value = ''
     }
@@ -94,9 +105,13 @@ function handleTweetBtnClick(){
 
 function getFeedHtml(){
     let feedHtml = ``
+    let tweetsFromLocalStorage = JSON.parse(localStorage.getItem("tweetsLocalData"))
     
-    tweetsData.forEach(function(tweet){
-        
+    if(tweetsFromLocalStorage === null){
+        populateLocalStorage()
+    }
+
+    tweetsFromLocalStorage.forEach(function(tweet){
         let likeIconClass = ''
         
         if (tweet.isLiked){
