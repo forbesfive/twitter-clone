@@ -71,6 +71,14 @@ button{
     font-weight: 600;
 }
 
+.reply-input {
+    margin: 10px 0;
+}
+
+.reply-btn {
+    background-color:#0F8CDF;
+    opacity: 0.8;
+}
 /* tweet */
 
 .tweet{

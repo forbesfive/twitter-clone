@@ -14,7 +14,28 @@ document.addEventListener('click', function(e){
     else if(e.target.id === 'tweet-btn'){
         handleTweetBtnClick()
     }
+    else if(e.target.dataset.replyBtn){
+        handleReplyBtnClick(e.target.dataset.replyBtn)
+    }
+
 })
+
+function handleReplyBtnClick(tweetId){
+    if(document.getElementById(`reply-input-${tweetId}`).value){
+        const targetTweetObj = tweetsData.filter(function(tweet){
+            return tweet.uuid === tweetId
+        })[0]
+
+        targetTweetObj.replies.unshift(
+        {
+            handle: `@scrimba ✅`,
+            profilePic: `images/scrimbalogo.png`,
+            tweetText: document.getElementById(`reply-input-${tweetId}`).value,
+        })
+        render()
+        handleReplyClick(tweetId)
+    }
+}
  
 function handleLikeClick(tweetId){ 
     const targetTweetObj = tweetsData.filter(function(tweet){
@@ -88,21 +109,23 @@ function getFeedHtml(){
             retweetIconClass = 'retweeted'
         }
         
-        let repliesHtml = ''
+        let repliesHtml = `
+        <textarea placeholder="Reply here" class="reply-input" id="reply-input-${tweet.uuid}"></textarea>
+        <button class="reply-btn" id="reply-btn-${tweet.uuid}" data-reply-btn="${tweet.uuid}">Reply</button>`
         
         if(tweet.replies.length > 0){
             tweet.replies.forEach(function(reply){
                 repliesHtml+=`
-<div class="tweet-reply">
-    <div class="tweet-inner">
-        <img src="${reply.profilePic}" class="profile-pic">
-            <div>
-                <p class="handle">${reply.handle}</p>
-                <p class="tweet-text">${reply.tweetText}</p>
-            </div>
-        </div>
-</div>
-`
+                <div class="tweet-reply">
+                    <div class="tweet-inner">
+                        <img src="${reply.profilePic}" class="profile-pic">
+                            <div>
+                                <p class="handle">${reply.handle}</p>
+                                <p class="tweet-text">${reply.tweetText}</p>
+                            </div>
+                        </div>
+                </div>
+                `
             })
         }
         
