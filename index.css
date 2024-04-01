@@ -71,6 +71,10 @@ button{
     font-weight: 600;
 }
 
+button:hover {
+    background-color: #555;
+}
+
 .reply-input {
     margin: 10px 0;
 }
@@ -79,6 +83,16 @@ button{
     background-color:#0F8CDF;
     opacity: 0.8;
 }
+
+.delete-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    padding: 3px 5px;
+    border-radius: 10px;
+}
+
 /* tweet */
 
 .tweet{
@@ -89,6 +103,7 @@ button{
 }
 
 .tweet-inner{
+    position: relative;
     display: flex;
     align-items: flex-start;
     gap: 10px;

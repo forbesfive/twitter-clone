@@ -23,26 +23,10 @@ document.addEventListener('click', function(e){
     else if(e.target.dataset.replyBtn){
         handleReplyBtnClick(e.target.dataset.replyBtn)
     }
-
-})
-
-function handleReplyBtnClick(tweetId){
-    if(document.getElementById(`reply-input-${tweetId}`).value){
-        const targetTweetObj = tweetsData.filter(function(tweet){
-            return tweet.uuid === tweetId
-        })[0]
-
-        targetTweetObj.replies.unshift(
-        {
-            handle: `@scrimba ✅`,
-            profilePic: `images/scrimbalogo.png`,
-            tweetText: document.getElementById(`reply-input-${tweetId}`).value,
-        })
-        localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData))
-        render()
-        handleReplyClick(tweetId)
+    else if(e.target.dataset.deleteBtn){
+        handleDeleteBtnClick(e.target.dataset.deleteBtn)
     }
-}
+})
  
 function handleLikeClick(tweetId){ 
     const targetTweetObj = tweetsData.filter(function(tweet){
@@ -56,7 +40,7 @@ function handleLikeClick(tweetId){
         targetTweetObj.likes++ 
     }
     targetTweetObj.isLiked = !targetTweetObj.isLiked
-    localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData))
+    populateLocalStorage()
     render()
 }
 
@@ -72,7 +56,7 @@ function handleRetweetClick(tweetId){
         targetTweetObj.retweets++
     }
     targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted
-    localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData))
+    populateLocalStorage()
     render() 
 }
 
@@ -96,11 +80,39 @@ function handleTweetBtnClick(){
             uuid: uuidv4()
         })
     
-        localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData) )
+    localStorage.setItem("tweetsLocalData", JSON.stringify(tweetsData) )
     render()
     tweetInput.value = ''
     }
+}
 
+function handleDeleteBtnClick(tweetId){
+    for (let i = 0; i < tweetsData.length; i++){
+        if (tweetsData[i].uuid === tweetId){
+            tweetsData.splice(i, 1)
+        }
+    }
+
+    populateLocalStorage()
+    render()
+}
+
+function handleReplyBtnClick(tweetId){
+    if(document.getElementById(`reply-input-${tweetId}`).value){
+        const targetTweetObj = tweetsData.filter(function(tweet){
+            return tweet.uuid === tweetId
+        })[0]
+
+        targetTweetObj.replies.unshift(
+        {
+            handle: `@scrimba ✅`,
+            profilePic: `images/scrimbalogo.png`,
+            tweetText: document.getElementById(`reply-input-${tweetId}`).value,
+        })
+        populateLocalStorage()
+        render()
+        handleReplyClick(tweetId)
+    }
 }
 
 function getFeedHtml(){
@@ -149,7 +161,7 @@ function getFeedHtml(){
 <div class="tweet">
     <div class="tweet-inner">
         <img src="${tweet.profilePic}" class="profile-pic">
-        <div>
+        <div>        
             <p class="handle">${tweet.handle}</p>
             <p class="tweet-text">${tweet.tweetText}</p>
             <div class="tweet-details">
@@ -172,7 +184,8 @@ function getFeedHtml(){
                     ${tweet.retweets}
                 </span>
             </div>   
-        </div>            
+        </div>
+        <button class="delete-btn" id="delete-btn-${tweet.uuid}" data-delete-btn="${tweet.uuid}" title="Delete Message">X</button>  
     </div>
     <div class="hidden" id="replies-${tweet.uuid}">
         ${repliesHtml}
